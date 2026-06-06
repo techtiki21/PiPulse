@@ -26,16 +26,25 @@ class agent(BaseHTTPRequestHandler):
                 'percent': disk.percent
             }
             self.sendData(diskData)
+        elif self.path == '/memory':
+            ram = psutil.virtual_memory()
+            ramData = {
+                'total': f"{ram.total / (1024**3):.2f}",
+                'used': f"{ram.used / (1024**3):.2f}",
+                'available': f"{ram.available / (1024**3):.2f}",
+                'percent': ram.percent
+            }
+            self.sendData(ramData)
         else:
             self.send_response(404)
             self.end_headers()
 
-PORT = input("What port would you like PiPulse to listen on (default 8080): ")
+PORT = input("What port would you like PiPulse to listen on (default 8000): ")
 try:
     PORT = int(PORT)
 except ValueError:
-    print("Must be a number. Setting port to default 8080.")
-    PORT = 8080
+    print("Must be a number. Setting port to default 8000.")
+    PORT = 8000
     
 def run_server():
     # listen on all network interfaces
