@@ -15,21 +15,23 @@ def check_ping(ip, port, endpoint):
         print(f"  Error details: {e}")
         return False
 
+
 def main():
+    # main command
     parser = argparse.ArgumentParser(description="View status of Raspberry Pi")
+    parser.add_argument('--host', required=True, help='Local IP of the Pi')
+    parser.add_argument('--port', default=8080, type=int)
     
     # Create subcommand 'stats'
     subparsers = parser.add_subparsers(dest="command", required=True)
     
-    # Ping subcommand
-    stats_parser = subparsers.add_parser('stats', help='Recieve hardware utilization')
-    stats_parser.add_argument('--host', required=True, help='Local IP of the Pi')
-    stats_parser.add_argument('--port', default=8080, type=int)
-    
+    # stats subcommand
+    statsParser = subparsers.add_parser('stats', help='Recieve hardware utilization')
+
     args = parser.parse_args()
+    print(f"Pinging Pi at {args.host}...")
 
     if args.command == 'stats':
-        print(f"Pinging Pi at {args.host}...")
         check_ping(args.host, args.port, 'stats')
 
 if __name__ == '__main__':
