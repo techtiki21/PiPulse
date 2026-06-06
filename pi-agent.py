@@ -3,6 +3,12 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import psutil
 
 class agent(BaseHTTPRequestHandler):
+    def sendData(self, data):
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(data).encode('utf-8'))
+
     def do_GET(self):  # overrides BaseHTTPRequestHandler func
         if self.path == '/stats':
             utilization = {
@@ -10,10 +16,16 @@ class agent(BaseHTTPRequestHandler):
                 'ramUsage': psutil.virtual_memory().percent,
                 'diskUsage': psutil.disk_usage('/').percent
             }
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            self.wfile.write(json.dumps(utilization).encode('utf-8'))
+            self.sendData(utilization)
+        elif self.path == '/disk':
+            disk = psutil.disk_usage('/')
+            diskData = {
+                'total': f"{disk.total / (1024**3):.2f}",
+                'used': f"{disk.used / (1024**3):.2f}",
+                'free': f"{disk.free / (1024**3):.2f}",
+                'percent': disk.percent
+            }
+            self.sendData(diskData)
         else:
             self.send_response(404)
             self.end_headers()
