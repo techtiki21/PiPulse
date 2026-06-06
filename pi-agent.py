@@ -1,13 +1,19 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import psutil
 
 class agent(BaseHTTPRequestHandler):
     def do_GET(self):  # overrides BaseHTTPRequestHandler func
         if self.path == '/stats':
+            utilization = {
+                'cpuPercent': psutil.cpu_percent(interval=0.5),
+                'ramUsage': psutil.virtual_memory().percent,
+                'diskUsage': psutil.disk_usage('/').percent
+            }
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            self.wfile.write(json.dumps({"status": "pi-pulse"}).encode('utf-8'))
+            self.wfile.write(json.dumps(utilization).encode('utf-8'))
         else:
             self.send_response(404)
             self.end_headers()
@@ -21,7 +27,7 @@ except ValueError:
     
 def run_server():
     # listen on all network interfaces
-    serverAddress = ('', PORT)  
+    serverAddress = ('', int(PORT))  
         
     # init the server with custom traffic rules
     httpd = HTTPServer(serverAddress, agent)

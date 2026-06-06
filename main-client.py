@@ -7,9 +7,9 @@ def check_ping(ip, port, endpoint):
     try:
         with urllib.request.urlopen(url, timeout=5) as response:
             data = json.loads(response.read().decode())
-            if data.get("status") == "pi-pulse":
-                print(f"Connected")
-                return True
+            print(f"CPU Utilized: {data.get('cpuPercent')}%")
+            print(f"Ram Utilized: {data.get('ramUsage')}%")
+            print(f"Disk Utilized: {data.get('diskUsage')}%")
     except Exception as e:
         print(f"Could not reach {ip}:{port}")
         print(f"  Error details: {e}")
@@ -18,13 +18,13 @@ def check_ping(ip, port, endpoint):
 def main():
     parser = argparse.ArgumentParser(description="View status of Raspberry Pi")
     
-    # Create subcommand 'ping'
+    # Create subcommand 'stats'
     subparsers = parser.add_subparsers(dest="command", required=True)
     
     # Ping subcommand
-    ping_parser = subparsers.add_parser('stats', help='Recieve hardware utilization')
-    ping_parser.add_argument('--host', required=True, help='Local IP of the Pi')
-    ping_parser.add_argument('--port', default=8080, type=int)
+    stats_parser = subparsers.add_parser('stats', help='Recieve hardware utilization')
+    stats_parser.add_argument('--host', required=True, help='Local IP of the Pi')
+    stats_parser.add_argument('--port', default=8080, type=int)
     
     args = parser.parse_args()
 
