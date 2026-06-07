@@ -14,17 +14,23 @@ The PiPulse Agent is a systemd service that will run in the background of your R
 
 Open a terminal window in the `pipulse-agent` folder.
 
+#### Edit Port (Optional)
+
+1. Open `pi-agent.py`
+2. Modify the `PORT` variable to a oprt of your choosing. (anything below port 1000 is not recommended)
+
 #### Setup Virtual Environment
 
 1. Create a virtual environment: `python -m venv .venv`
 2. Activate it: `source .venv/bin/activate`
 3. Install Python dependencies: `pip install -r requirements.txt`
 
-#### Modify .service file and add to daemon
+#### Modify .service file, open local port, and add to daemon
 
 1. Open `pipulse-agent.service` on a text editor of your choice.
 2. Replace everything in curly braces with the necessary values.
 3. Save it and move it to `/etc/systemd/system/` (sudo may be needed)
+4. If you have `ufw` installed, make sure to open the port locally: `sudo ufw allow [port]`. Otherwise, skip this step.
 
 #### Refresh Daemon and Start Service
 
