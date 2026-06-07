@@ -47,7 +47,7 @@ If you are running a server or even multiple on your Raspberry Pi, constant moni
 | ----------------------------------------------- | -------- | ------------------------------------------------------------------------- |
 | `./pipulse-client`                              | YES      | Runs the CLI                                                              |
 | `--host [HOST IP]`                              | YES      | Local IP of where the agent service is running                            |
-| `--port [port set in the pi-agent.py script]` | YES      | Local open port of where the agent service is running<br /><br /><br /> |
+| `--port [port set in the pi-agent.py script]` | NO      | Local open port of where the agent service is running (default 8000) |
 
 #### Endpoints
 
