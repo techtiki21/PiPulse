@@ -1,0 +1,29 @@
+# Change all {xxx} in lines 10, 13, and 18
+# After you modify this file, move it to "/etc/systemd/system/"
+
+[Unit]
+Description=PiPulse Agent
+After=network.target
+
+[Service]
+# --- Replace "dir" with the pipulse-agent folder path (lines 10 & 13) ---
+ExecStart={dir}/.venv/bin/python {dir}/pi-agent.py
+
+# This should be the pipulse-agent folder.
+WorkingDirectory={dir}
+
+# The user who should run the service. (no need for a root user)
+# You can use a seperate user for security if you want
+User={pi}
+
+# systemd will automatically restart the service if it fails.
+Restart=always
+# (Optional) The amount of time to wait before restarting the service.
+# RestartSec=5s
+
+# Configure how the service's output is handled.
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

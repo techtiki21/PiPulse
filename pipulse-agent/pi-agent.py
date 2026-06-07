@@ -2,6 +2,9 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import psutil
 
+# modify to your choosing
+PORT = 8000 
+
 class agent(BaseHTTPRequestHandler):
     def sendData(self, data):
         self.send_response(200)
@@ -39,12 +42,6 @@ class agent(BaseHTTPRequestHandler):
             self.send_response(404)
             self.end_headers()
 
-PORT = input("What port would you like PiPulse to listen on (default 8000): ")
-try:
-    PORT = int(PORT)
-except ValueError:
-    print("Must be a number. Setting port to default 8000.")
-    PORT = 8000
     
 def run_server():
     # listen on all network interfaces

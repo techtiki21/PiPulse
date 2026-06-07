@@ -35,7 +35,7 @@ def main():
     # main command
     parser = argparse.ArgumentParser(description="View status of Raspberry Pi")
     parser.add_argument('--host', required=True, help='Local IP of the Pi')
-    parser.add_argument('--port', default=8080, type=int)
+    parser.add_argument('--port', default=8000, type=int)
     
     # Create subparsers to add to the main parser
     subparsers = parser.add_subparsers(dest="command", required=True)
