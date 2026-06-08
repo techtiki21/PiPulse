@@ -29,6 +29,13 @@ def check_ping(ip, port, endpoint):
         print(f"Used RAM: {data.get('used')} GB")
         print(f"Available RAM: {data.get('available')} GB")
         print(f"RAM Utilized: {data.get('percent')}%\n\n")
+    elif endpoint == 'cpu':
+        print(f"CPU Cores: {data.get('count')}")
+        print(f"Physical CPU Cores: {data.get('physical')}")
+        print(f"CPU Usage: {data.get('usage')}%")
+        print("Core Usage: ")
+        for i, core in enumerate(data.get('coreUsage')):
+            print(f"    Core {i+1}: {core}%")
 
 
 def main():
@@ -40,14 +47,10 @@ def main():
     # Create subparsers to add to the main parser
     subparsers = parser.add_subparsers(dest="command", required=True)
     
-    # stats subcommand
     statsParser = subparsers.add_parser('stats', help='Recieve hardware utilization')
-
-    # disk subcommand
     diskParser = subparsers.add_parser('disk', help="Recieve detailed disk information")
-
-    # ram subcommand
     memoryParser = subparsers.add_parser('memory', help="Recieve detailed RAM information")
+    cpuParser = subparsers.add_parser('cpu', help="Recieve detailed CPU information")
 
     args = parser.parse_args()
     print(f"\n\nPinging Pi at {args.host}...\n")
@@ -58,6 +61,8 @@ def main():
         check_ping(args.host, args.port, 'disk')
     elif args.command == 'memory':
         check_ping(args.host, args.port, 'memory')
+    elif args.command == 'cpu':
+        check_ping(args.host, args.port, 'cpu')
 
 if __name__ == '__main__':
     main()

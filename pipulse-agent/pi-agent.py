@@ -13,34 +13,40 @@ class agent(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(data).encode('utf-8'))
 
     def do_GET(self):  # overrides BaseHTTPRequestHandler func
+        data = {}
         if self.path == '/stats':
-            utilization = {
-                'cpuPercent': psutil.cpu_percent(interval=0.5),
+            data = {
+                'cpuPercent': psutil.cpu_percent(interval=1),
                 'ramUsage': psutil.virtual_memory().percent,
                 'diskUsage': psutil.disk_usage('/').percent
             }
-            self.sendData(utilization)
         elif self.path == '/disk':
             disk = psutil.disk_usage('/')
-            diskData = {
+            datd = {
                 'total': f"{disk.total / (1024**3):.2f}",
                 'used': f"{disk.used / (1024**3):.2f}",
                 'free': f"{disk.free / (1024**3):.2f}",
                 'percent': disk.percent
             }
-            self.sendData(diskData)
         elif self.path == '/memory':
             ram = psutil.virtual_memory()
-            ramData = {
+            data = {
                 'total': f"{ram.total / (1024**3):.2f}",
                 'used': f"{ram.used / (1024**3):.2f}",
                 'available': f"{ram.available / (1024**3):.2f}",
                 'percent': ram.percent
             }
-            self.sendData(ramData)
+        elif self.path == '/cpu':
+            data = {
+                'count': psutil.cpu_count(),
+                'physical': psutil.cpu_count(logical=False),
+                'usage': psutil.cpu_percent(interval=1),
+                'coreUsage': psutil.cpu_percent(interval=1, percpu=True)
+            }
         else:
             self.send_response(404)
             self.end_headers()
+        self.sendData(data)
 
     
 def run_server():
