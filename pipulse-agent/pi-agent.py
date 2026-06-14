@@ -1,5 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import urlparse, parse_qs
 import psutil
 
 # modify to your choosing
@@ -13,22 +14,24 @@ class agent(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(data).encode('utf-8'))
 
     def do_GET(self):  # overrides BaseHTTPRequestHandler func
+        parsedURL = urlparse(self.path) 
+        queryParams = parse_qs(parsedURL.query)
         data = {}
-        if self.path == '/stats':
+        if parsedURL.path == '/stats':
             data = {
                 'cpuPercent': psutil.cpu_percent(interval=1),
                 'ramUsage': psutil.virtual_memory().percent,
                 'diskUsage': psutil.disk_usage('/').percent
             }
-        elif self.path == '/disk':
+        elif parsedURL.path == '/disk':
             disk = psutil.disk_usage('/')
-            datd = {
+            data = {
                 'total': f"{disk.total / (1024**3):.2f}",
                 'used': f"{disk.used / (1024**3):.2f}",
                 'free': f"{disk.free / (1024**3):.2f}",
                 'percent': disk.percent
             }
-        elif self.path == '/memory':
+        elif parsedURL.path == '/memory':
             ram = psutil.virtual_memory()
             data = {
                 'total': f"{ram.total / (1024**3):.2f}",
@@ -36,12 +39,14 @@ class agent(BaseHTTPRequestHandler):
                 'available': f"{ram.available / (1024**3):.2f}",
                 'percent': ram.percent
             }
-        elif self.path == '/cpu':
+        elif parsedURL.path == '/cpu':
+            seconds = int(queryParams.get("seconds", ["1"])[0])
+            coreUsage = psutil.cpu_percent(interval=seconds, percpu=True)
             data = {
                 'count': psutil.cpu_count(),
                 'physical': psutil.cpu_count(logical=False),
-                'usage': psutil.cpu_percent(interval=1),
-                'coreUsage': psutil.cpu_percent(interval=1, percpu=True)
+                'usage': round(sum(coreUsage) / len(coreUsage), 2),
+                'coreUsage': coreUsage
             }
         else:
             self.send_response(404)
