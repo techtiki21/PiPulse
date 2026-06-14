@@ -54,8 +54,9 @@ If you are running a server or even multiple on your Raspberry Pi, constant moni
 After writing the main command, select an endpoint to give you the information you need.
 
 
-| Endpoint | Description                                        |
-| -------- | -------------------------------------------------- |
-| `stats`  | Provides summary of CPU, RAM, and disk utilization |
-| `disk`   | Provides disk space information and utilization    |
-| `memory` | Provides RAM capacity information and utilization |
+| Endpoint | Description                                        | Arguments |
+| -------- | -------------------------------------------------- | -------- |
+| `stats`  | Provides summary of CPU, RAM, and disk utilization | None |
+| `disk`   | Provides disk space information and utilization    | None |
+| `memory` | Provides RAM capacity information and utilization | None |
+| `cpu` | Provides CPU cores and core usages | `--seconds`: Length of recording interval (default 2)|
