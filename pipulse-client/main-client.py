@@ -1,6 +1,7 @@
 import argparse         # cmd arguments
 import urllib.request   # HTTP requests
 import json
+import sqlite3
 
 def fetchJSON(url):
     with urllib.request.urlopen(url, timeout=1000) as response:
@@ -60,6 +61,46 @@ def main():
         dest='secondsFlag',
         help="Set a interval to record CPU usage"
         )
+    
+    # create/connect to database
+    db = sqlite3.connect('pipulse.db')
+    cursor = db.cursor()
+
+    cursor.executescript('''
+        CREATE TABLE IF NOT EXISTS stats (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cpu INTEGER,
+            gpu INTEGER,
+            ram INTEGER,
+            time DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+                   
+        CREATE TABLE IF NOT EXISTS disk (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            total INTEGER,
+            taken INTEGER,
+            avail INTEGER,
+            usage INTEGER,
+            time DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+                   
+        CREATE TABLE IF NOT EXISTS memory (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            total INTEGER,
+            taken INTEGER,
+            avail INTEGER,
+            usage INTEGER,
+            time DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+                   
+        CREATE TABLE IF NOT EXISTS cpu (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cores INTEGER,
+            physical INTEGER,
+            usage INTEGER,
+            time DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+    ''')
 
     args = parser.parse_args()
     print(f"\n\nPinging Pi at {args.host}...\n")
