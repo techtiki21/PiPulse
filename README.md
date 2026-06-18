@@ -26,11 +26,13 @@ If you are running a server or even multiple on your Raspberry Pi, constant moni
 * When a command is ran on the client, it connects to the selected local IP and port (if it has the agent running).
 * The agent uses `psutils` to send back system information to the client as `json` depending on the endpoint.
 * The client then decodes the `json` and prints the information to the terminal.
+* The data then gets inserted into the relevant tables in the `SQLite` database.
 
 ## Features
 
 * Gather a summary of system utilization.
 * Recieve detailed memory and disk information
+* Stores recorded data in a `.db` file using `SQLite3`
 
 ## Client Setup
 
