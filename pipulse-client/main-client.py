@@ -2,9 +2,12 @@ import argparse         # cmd arguments
 import urllib.request   # HTTP requests
 import json
 import sqlite3
+from datetime import datetime, timezone
+
+dataList = ["0", 0, 0, 0, 0]
 
 def fetchJSON(url):
-    with urllib.request.urlopen(url, timeout=1000) as response:
+    with urllib.request.urlopen(url, timeout=20) as response:
         return json.loads(response.read().decode())
 
 def check_ping(ip, port, endpoint):
@@ -17,27 +20,39 @@ def check_ping(ip, port, endpoint):
             print(f"  Error details: {e}")
             return False
     
+    global dataList
     if mainEndpoint == 'stats':
-        print(f"CPU Utilized: {data.get('cpuPercent')}%")
-        print(f"RAM Utilized: {data.get('ramUsage')}%")
-        print(f"Disk Utilized: {data.get('diskUsage')}%\n\n")
+        dataList = [data.get('cpuPercent'), data.get('ramUsage'), data.get('diskUsage')]
+        print(f"CPU Utilized: {dataList[0]}%")
+        print(f"RAM Utilized: {dataList[1]}%")
+        print(f"Disk Utilized: {dataList[2]}%\n\n")
+
     elif mainEndpoint == 'disk':
-        print(f"Total Disk Space: {data.get('total')} GB")
-        print(f"Used Disk Space: {data.get('used')} GB")
-        print(f"Free Disk Space: {data.get('free')} GB")
-        print(f"Disk Utilized: {data.get('percent')}%\n\n")
+        dataList = [data.get('total'), data.get('used'), data.get('free'), data.get('percent')]
+        print(f"Total Disk Space: {dataList[0]} GB")
+        print(f"Used Disk Space: {dataList[1]} GB")
+        print(f"Free Disk Space: {dataList[2]} GB")
+        print(f"Disk Utilized: {dataList[3]}%\n\n")
+
     elif mainEndpoint == 'memory':
-        print(f"Total RAM Size: {data.get('total')} GB")
-        print(f"Used RAM: {data.get('used')} GB")
-        print(f"Available RAM: {data.get('available')} GB")
-        print(f"RAM Utilized: {data.get('percent')}%\n\n")
+        dataList = [data.get('total'), data.get('used'), data.get('available'), data.get('percent')]
+        print(f"Total RAM Size: {dataList[0]} GB")
+        print(f"Used RAM: {dataList[1]} GB")
+        print(f"Available RAM: {dataList[2]} GB")
+        print(f"RAM Utilized: {dataList[3]}%\n\n")
+
     elif mainEndpoint == 'cpu':
-        print(f"CPU Cores: {data.get('count')}")
-        print(f"Physical CPU Cores: {data.get('physical')}")
-        print(f"CPU Usage: {data.get('usage')}%")
+        dataList = [data.get('count'), data.get('physical'), data.get('usage')]
+        print(f"CPU Cores: {dataList[0]}")
+        print(f"Physical CPU Cores: {dataList[1]}")
+        print(f"CPU Usage: {dataList[2]}%")
         print("Core Usage: ")
         for i, core in enumerate(data.get('coreUsage')):
             print(f"    Core {i+1}: {core}%")
+
+    dateUTC = datetime.now(timezone.utc)
+    timestamp = dateUTC.strftime('%Y-%m-%d %H:%M:%S')
+    dataList.append(timestamp)
 
 
 def main():
@@ -105,16 +120,35 @@ def main():
     args = parser.parse_args()
     print(f"\n\nPinging Pi at {args.host}...\n")
 
-
     if args.command == 'stats':
         check_ping(args.host, args.port, 'stats')
+        cursor.execute('''
+            INSERT INTO stats (cpu, gpu, ram, time)
+            VALUES (?, ?, ?, ?)
+        ''', dataList)
+
     elif args.command == 'disk':
         check_ping(args.host, args.port, 'disk')
+        cursor.execute('''
+            INSERT INTO disk (total, taken, avail, usage, time)
+            VALUES (?, ?, ?, ?, ?)
+        ''', dataList[:5])
+
     elif args.command == 'memory':
         check_ping(args.host, args.port, 'memory')
+        cursor.execute('''
+            INSERT INTO memory (total, taken, avail, usage, time)
+            VALUES (?, ?, ?, ?, ?)
+        ''', dataList[:5])
+
     elif args.command == 'cpu':
         print(f"Recording interval for {args.secondsFlag} seconds...\n")
         check_ping(args.host, args.port, f'cpu?seconds={args.secondsFlag}')
+        cursor.execute('''
+            INSERT INTO cpu (cores, physical, usage, time)
+            VALUES (?, ?, ?, ?)
+        ''', dataList[:4])
 
+    db.commit()
 if __name__ == '__main__':
     main()
