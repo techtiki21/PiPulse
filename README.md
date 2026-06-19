@@ -42,23 +42,27 @@ If you are running a server or even multiple on your Raspberry Pi, constant moni
 
 ## Usage
 
+#### Example Session
+
+![1781856048758](images/example.gif)
+
 #### Main Command Options
 
 
-| Option                                          | Required | Description                                                               |
-| ----------------------------------------------- | -------- | ------------------------------------------------------------------------- |
-| `./pipulse-client`                              | YES      | Runs the CLI                                                              |
-| `--host [HOST IP]`                              | YES      | Local IP of where the agent service is running                            |
-| `--port [port set in the pi-agent.py script]` | NO      | Local open port of where the agent service is running (default 8000) |
+| Option                                          | Required | Description                                                            |
+| ----------------------------------------------- | -------- | ---------------------------------------------------------------------- |
+| `./pipulse-client`                              | YES      | Runs the CLI                                                           |
+| `--host [HOST IP]`                              | YES      | Local IP of where the agent service is running                         |
+| `--port [port set in the pi-agent.py script]` | NO       | Local open port of where the agent service is running (default 8000) |
 
 #### Endpoints
 
 After writing the main command, select an endpoint to give you the information you need.
 
 
-| Endpoint | Description                                        | Arguments |
-| -------- | -------------------------------------------------- | -------- |
-| `stats`  | Provides summary of CPU, RAM, and disk utilization | None |
-| `disk`   | Provides disk space information and utilization    | None |
-| `memory` | Provides RAM capacity information and utilization | None |
-| `cpu` | Provides CPU cores and core usages | `--seconds`: Length of recording interval (default 2)|
+| Endpoint | Description                                        | Arguments                                             |
+| -------- | -------------------------------------------------- | ----------------------------------------------------- |
+| `stats`  | Provides summary of CPU, RAM, and disk utilization | None                                                  |
+| `disk`   | Provides disk space information and utilization    | None                                                  |
+| `memory` | Provides RAM capacity information and utilization | None                                                  |
+| `cpu`    | Provides CPU cores and core usages                 | `--seconds`: Length of recording interval (default 2) |
